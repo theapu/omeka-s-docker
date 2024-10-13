@@ -1,0 +1,53 @@
+services:
+  omeka:
+    build: 
+      context: .
+      args:
+        - TZ=Asia/Kolkata
+        - MYSQL_HOST=omekadb
+        - MYSQL_USER=omeka_user
+        - MYSQL_PASSWORD=<database password>
+        - MYSQL_DATABASE=omeka_db
+    container_name: omeka-s
+    ports:
+      - "8080:80"
+    volumes:
+      - omeka-themes:/var/www/html/omeka-s/themes
+      - omeka-modules:/var/www/html/omeka-s/modules
+      - omeka-config:/var/www/html/omeka-s/config
+    environment:
+      - TZ=Asia/Kolkata
+      - MYSQL_HOST=omekadb
+      - MYSQL_USER=omeka_user
+      - MYSQL_PASSWORD=<database password>
+      - MYSQL_DATABASE=omeka_db
+    depends_on:
+      - omekadb
+
+  omekadb:
+    image: mysql:5.7
+    container_name: omeka-s-mysql
+    environment:
+      - TZ=Asia/Kolkata
+      - MYSQL_ROOT_PASSWORD=<mysql root password>
+      - MYSQL_USER=omeka_user
+      - MYSQL_PASSWORD=<database password>
+      - MYSQL_DATABASE=omeka_db
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  omeka-themes:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/DockerApps/omeka-s/themes
+  omeka-modules:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/DockerApps/omeka-s/modules
+  omeka-config:
+  db_data:
